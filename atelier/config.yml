@@ -2,7 +2,6 @@ backend:
   name: github
   repo: robbie-likescodes/Tessa-Bennion-s-Art-Page
   branch: main
-  # No OAuth proxy needed if the repo is PUBLIC (Decap uses GitHub's implicit auth flow)
 
 media_folder: "uploads"
 public_folder: "uploads"
@@ -12,7 +11,7 @@ publish_mode: editorial_workflow
 collections:
   - name: "works"
     label: "Works"
-    folder: "content/works"
+    folder: "content/works"      # ensure this folder exists (add a .gitkeep if empty)
     create: true
     slug: "{{year}}-{{slug}}"
     editor:
