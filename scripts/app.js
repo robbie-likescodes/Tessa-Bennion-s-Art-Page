@@ -1,7 +1,6 @@
 // app.js — bootstrap site enhancements
 import { initCarousel } from './carousel.js';
 
-// Ombré slider fill + label
 function initOmbreRange(sel, outSel){
   const el = document.querySelector(sel), out = document.querySelector(outSel);
   if(!el) return;
@@ -14,27 +13,26 @@ function initOmbreRange(sel, outSel){
   paint();
 }
 
-// Super simple lightbox (no libs)
 function initLightbox(){
   const overlay = document.getElementById('lightbox');
   const img = overlay?.querySelector('.lightbox__img');
   const meta = overlay?.querySelector('#lightboxMeta');
   const closeBtn = overlay?.querySelector('.lightbox__close');
 
-  function open(e){
+  const open = (e) => {
     const t = e.currentTarget;
     overlay.hidden = false;
     img.src = t.src;
     img.alt = t.alt || '';
     meta.textContent = t.alt || '';
     document.body.style.overflow = 'hidden';
-  }
-  function close(){
+  };
+  const close = () => {
     overlay.hidden = true;
     img.src = '';
     meta.textContent = '';
     document.body.style.overflow = '';
-  }
+  };
 
   document.querySelectorAll('[data-lightbox]').forEach(el=>{
     el.style.cursor = 'zoom-in';
@@ -46,16 +44,14 @@ function initLightbox(){
   window.addEventListener('keydown', (e)=> { if(e.key==='Escape' && !overlay.hidden) close(); });
 }
 
-// Hidden admin link via long-press on logo
 function initHiddenAdmin(){
   const logo = document.getElementById('siteLogo');
   const link = document.getElementById('adminLink');
   if(!logo || !link) return;
   let timer;
   const show = ()=> link.style.display = 'inline-block';
-  ['mousedown','touchstart'].forEach(ev=> logo.addEventListener(ev, ()=> timer = setTimeout(show, 1500)));
+  ['mousedown','touchstart'].forEach(ev=> logo.addEventListener(ev, ()=> timer = setTimeout(show, 1200)));
   ['mouseup','mouseleave','touchend','touchcancel'].forEach(ev=> logo.addEventListener(ev, ()=> clearTimeout(timer)));
-  // Keyboard easter egg: g a l l e r y
   const seq=['g','a','l','l','e','r','y']; let buf=[];
   window.addEventListener('keydown', e=>{
     buf.push(e.key.toLowerCase()); if (buf.length>seq.length) buf.shift();
@@ -63,9 +59,15 @@ function initHiddenAdmin(){
   });
 }
 
+function setYearNow(){
+  const el = document.getElementById('yearNow');
+  if(el) el.textContent = new Date().getFullYear();
+}
+
 document.addEventListener('DOMContentLoaded', ()=>{
   initOmbreRange('#yearRange', '#yearOut');
-  initCarousel();
+  initCarousel();        // dots + arrows + inertia scroll
   initLightbox();
   initHiddenAdmin();
+  setYearNow();
 });
