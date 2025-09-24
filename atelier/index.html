@@ -18,7 +18,7 @@
     .hint{ color:#888; font-size:12px; margin-top:10px }
   </style>
 
-  <!-- Manual init -->
+  <!-- Manual init so we fully control Decap config -->
   <script>window.CMS_MANUAL_INIT = true;</script>
 </head>
 <body>
@@ -41,9 +41,10 @@
   <div id="cmsRoot" hidden></div>
 
   <script>
-    // ======= GATE CONFIG =======
+    // ======= GATE CONFIG (your values) =======
     const SALT = "Passionforart";
-    const HASH_HEX = "b0ec7878d817c32506a98c03178f6c4cb88866d6862fb5a33fbe1c81b0483c46"; // sha256(SALT + "959595")
+    // sha256("Passionforart" + "959595")
+    const HASH_HEX = "b0ec7878d817c32506a98c03178f6c4cb88866d6862fb5a33fbe1c81b0483c46";
 
     async function sha256hex(str){
       const enc = new TextEncoder().encode(str);
@@ -59,7 +60,7 @@
     const cmsRoot= document.getElementById('cmsRoot');
     const okBtn  = document.getElementById('ok');
 
-    // keypad
+    // keypad (0 centered on last row)
     [...'1234567890'].forEach(d=>{
       const b=document.createElement('button'); b.className='btn'; b.type='button'; b.textContent=d;
       b.addEventListener('click', ()=>{ if(codeEl.value.length<6) codeEl.value+=d; });
@@ -71,8 +72,6 @@
     document.getElementById('clear').onclick = ()=> codeEl.value='';
     document.getElementById('del').onclick   = ()=> codeEl.value=codeEl.value.slice(0,-1);
     okBtn.onclick = verify;
-
-    // prevent double submit
     codeEl.addEventListener('keydown', (e)=>{
       if(e.key==='Enter'){ e.preventDefault(); okBtn.click(); }
       if(!/^\d$/.test(e.key) && !['Backspace','Delete','ArrowLeft','ArrowRight','Tab','Enter'].includes(e.key)) e.preventDefault();
@@ -94,14 +93,10 @@
       if (window.__cmsBooted) return;
       window.__cmsBooted = true;
 
-      // Clear any stale Netlify/Identity artifacts from localStorage/sessionStorage
+      // Clear any stale Netlify Identity artifacts
       try {
-        Object.keys(localStorage).forEach(k=>{
-          if (/netlify|identity|git-gateway|cms-user/i.test(k)) localStorage.removeItem(k);
-        });
-        Object.keys(sessionStorage).forEach(k=>{
-          if (/netlify|identity|git-gateway|cms-user/i.test(k)) sessionStorage.removeItem(k);
-        });
+        Object.keys(localStorage).forEach(k=>{ if(/netlify|identity|git-gateway|cms-user/i.test(k)) localStorage.removeItem(k); });
+        Object.keys(sessionStorage).forEach(k=>{ if(/netlify|identity|git-gateway|cms-user/i.test(k)) sessionStorage.removeItem(k); });
       } catch {}
 
       gate.remove();
@@ -112,14 +107,15 @@
       s.src = "https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js";
       s.onload = () => {
         window.CMS.init({
-          load_config_file: false,
+          load_config_file: false, // ignore any YAML file
           config: {
-            // Force pure GitHub backend, implicit auth
+            // ======= GITHUB BACKEND via YOUR VERCEL OAUTH PROXY =======
             backend: {
               name: "github",
               repo: "robbie-likescodes/Tessa-Bennion-s-Art-Page",
               branch: "main",
-              auth_type: "implicit"
+              base_url: "https://project-gbxs8.vercel.app", // <— your Vercel project URL
+              auth_endpoint: "api/auth"
             },
             media_folder: "uploads",
             public_folder: "uploads",
@@ -134,7 +130,7 @@
                 editor: { preview: false },
                 fields: [
                   { label: "Title", name: "title", widget: "string" },
-                  { label: "Year", name: "year", widget: "number" },
+                  { label: "Year",  name: "year",  widget: "number" },
                   { label: "Medium", name: "medium", widget: "string" },
                   { label: "Dimensions", name: "dimensions", widget: "string" },
                   { label: "Cover Image", name: "cover", widget: "image" },
@@ -146,7 +142,7 @@
             ]
           }
         });
-        console.log('Decap CMS loaded (GitHub backend, YAML disabled)');
+        console.log('Decap CMS loaded (GitHub backend via Vercel OAuth proxy)');
       };
       document.body.appendChild(s);
     }
