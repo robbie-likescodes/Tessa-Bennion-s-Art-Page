@@ -1,0 +1,32 @@
+backend:
+  name: github
+  repo: your-username/your-repo
+  branch: main
+  # For private repos you must configure an OAuth app or proxy.
+  # Docs: https://decapcms.org/docs/github-backend/
+
+media_folder: "uploads"     # where images are committed in the repo
+public_folder: "/uploads"   # how the site references them
+
+publish_mode: editorial_workflow
+
+collections:
+  - name: "works"
+    label: "Works"
+    folder: "content/works"      # you can change to src/content/works if you prefer
+    create: true
+    slug: "{{year}}-{{slug}}"
+    editor:
+      preview: false
+    fields:
+      - {label: "Title", name: "title", widget: "string"}
+      - {label: "Year", name: "year", widget: "number"}
+      - {label: "Medium", name: "medium", widget: "string"}
+      - {label: "Dimensions", name: "dimensions", widget: "string"}
+      - {label: "Cover Image", name: "cover", widget: "image"}
+      - label: "Gallery"
+        name: "images"
+        widget: "list"
+        field: {label: "Image", name: "image", widget: "image"}
+      - {label: "Description", name: "body", widget: "markdown", required: false}
+      - {label: "Tags", name: "tags", widget: "list", required: false}
