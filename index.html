@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="color-scheme" content="light" />
+  <title>Artist Portfolio</title>
+
+  <!-- Fonts + Theme -->
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles/theme.css" />
+</head>
+<body class="page-enter">
+  <header class="header container">
+    <h1 class="brand" id="siteLogo">Alyssa Morgan</h1>
+    <nav class="nav" aria-label="Primary">
+      <a href="#works">Works</a>
+      <a href="#exhibitions">Exhibitions</a>
+      <a href="#about">About</a>
+      <!-- Hidden admin entry appears if you long-press the logo (see app.js) -->
+      <a id="adminLink" href="/atelier/" style="display:none">Studio</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <!-- HERO -->
+    <section aria-labelledby="heroTitle" style="margin-top:var(--space-5)">
+      <h2 id="heroTitle" class="visually-hidden">Featured</h2>
+      <figure class="hero">
+        <img class="reveal" src="/uploads/morning-light.jpg" alt="Morning Light — Oil on linen" />
+        <figcaption class="caption">Morning Light · Oil on linen · 24×30 in · 2023</figcaption>
+      </figure>
+      <div class="hr"></div>
+    </section>
+
+    <!-- CONTROLS (example ombré slider) -->
+    <section aria-labelledby="worksTitle">
+      <h2 id="worksTitle">Selected Works</h2>
+      <p class="caption">Oil on linen, graphite, and mixed media · 2019—2025</p>
+
+      <div class="control-row">
+        <span class="ombre-label">Year</span>
+        <input id="yearRange" class="ombre-range" type="range" min="2019" max="2025" value="2023" />
+        <span id="yearOut" class="caption">2023</span>
+      </div>
+
+      <!-- CAROUSEL -->
+      <div class="carousel" id="works">
+        <div class="frame">
+          <div class="rail">
+            <figure class="card reveal">
+              <img src="/uploads/morning-light.jpg" alt="Morning Light — Oil on linen" data-lightbox />
+              <figcaption>
+                <span class="work-title">Morning Light</span>
+                <span class="work-meta">Oil on linen · 24×30 in · 2023</span>
+              </figcaption>
+            </figure>
+            <figure class="card reveal">
+              <img src="/uploads/still-life-vi.jpg" alt="Still Life VI — Oil on panel" data-lightbox />
+              <figcaption>
+                <span class="work-title">Still Life VI</span>
+                <span class="work-meta">Oil on panel · 16×20 in · 2022</span>
+              </figcaption>
+            </figure>
+            <figure class="card reveal">
+              <img src="/uploads/portrait-study.jpg" alt="Portrait Study — Graphite on paper" data-lightbox />
+              <figcaption>
+                <span class="work-title">Portrait Study</span>
+                <span class="work-meta">Graphite on paper · 11×14 in · 2021</span>
+              </figcaption>
+            </figure>
+          </div>
+        </div>
+        <div class="dots" aria-hidden="true">
+          <div class="dot is-active"></div><div class="dot"></div><div class="dot"></div>
+        </div>
+      </div>
+
+      <div class="hr"></div>
+    </section>
+
+    <!-- EXHIBITIONS -->
+    <section id="exhibitions" aria-labelledby="exhTitle">
+      <h2 id="exhTitle">Exhibitions</h2>
+      <ul class="exhibitions">
+        <li><strong>Stillness & Light</strong> — Anchorage Museum, Anchorage AK — 2024</li>
+        <li><strong>Quiet Rooms</strong> — SFMOMA Open Space, San Francisco CA — 2023</li>
+      </ul>
+      <div class="hr"></div>
+    </section>
+
+    <!-- ABOUT -->
+    <section id="about" aria-labelledby="aboutTitle" style="margin-bottom: var(--space-5);">
+      <h2 id="aboutTitle">About</h2>
+      <p>Alyssa Morgan is a fine art painter focused on light studies in oil and graphite. Her work explores calm atmospheres, soft edges, and slow looking.</p>
+    </section>
+  </main>
+
+  <!-- LIGHTBOX OVERLAY (simple, no libs) -->
+  <div id="lightbox" class="lightbox" hidden>
+    <button class="lightbox__close" aria-label="Close">×</button>
+    <img class="lightbox__img" alt="" />
+    <div class="lightbox__meta caption" id="lightboxMeta"></div>
+  </div>
+
+  <!-- Scripts -->
+  <script type="module" src="/scripts/app.js"></script>
+</body>
+</html>
