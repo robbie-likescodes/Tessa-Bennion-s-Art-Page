@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <meta name="robots" content="noindex, nofollow">
+  <title>Studio</title>
+  <link rel="stylesheet" href="/styles/theme.css">
+  <style>
+    /* Minimal styles for the keypad gate */
+    .gate{ position:fixed; inset:0; display:grid; place-content:center; background:#fff; padding:22px }
+    .panel{ width:min(420px, 92vw); border:1px solid var(--line); border-radius:12px; padding:22px; box-shadow:0 10px 30px rgba(0,0,0,.06) }
+    .code{ letter-spacing:.4em; font-size:28px; text-align:center; padding:10px 12px; border:1px solid #ddd; border-radius:8px; width:100% }
+    .keys{ display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:14px }
+    .btn{ padding:14px 0; border:1px solid #ddd; border-radius:10px; background:#fafafa; text-align:center; cursor:pointer; user-select:none }
+    .btn:active{ background:#f0f0f0 }
+    .row{ display:flex; gap:14px; margin-top:14px }
+    .err{ color:#b00020; min-height:1.2em; margin-top:8px }
+    .hint{ color:#888; font-size:12px; margin-top:10px }
+  </style>
+</head>
+<body>
+  <div class="gate" id="gate">
+    <div class="panel">
+      <h1 class="brand" style="margin:0 0 8px 0; font-size:28px">Studio Access</h1>
+      <p class="caption" style="margin:0 0 14px 0">Enter your 6-digit code</p>
+      <input id="code" class="code" inputmode="numeric" maxlength="6" autocomplete="one-time-code" aria-label="6-digit code" />
+      <div class="keys" id="keys"></div>
+      <div class="row">
+        <div class="btn" id="clear">Clear</div>
+        <div class="btn" id="del">Delete</div>
+        <div class="btn" id="ok">OK</div>
+      </div>
+      <div class="err" id="err"></div>
+      <div class="hint">For your protection, attempts are rate-limited.</div>
+    </div>
+  </div>
+
+  <!-- Decap CMS UI will load here after code passes -->
+  <div id="cmsRoot" hidden></div>
+
+  <script>
+    // ======= CONFIG: replace SALT + HASH_HEX with your own (generated offline) =======
+    const SALT = "CHANGE_ME_SALT";
+    const HASH_HEX = "REPLACE_WITH_SHA256_HEX_OF_(SALT+YOUR_6_DIGIT_CODE)";
+
+    async function sha256hex(str){
+      const enc = new TextEncoder().encode(str);
+      const buf = await crypto.subtle.digest('SHA-256', enc);
+      return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,'0')).join('');
+    }
+    function rateKey(){ return 'studio_attempts_'+new Date().toISOString().slice(0,10); }
+
+    const codeEl = document.getElementById('code');
+    const keysEl = document.getElementById('keys');
+    const errEl  = document.getElementById('err');
+    const gate   = document.getElementById('gate');
+    const cmsRoot= document.getElementById('cmsRoot');
+
+    // Build keypad (with 0 centered bottom)
+    [...'1234567890'].forEach(d=>{
+      const b=document.createElement('div'); b.className='btn'; b.textContent=d;
+      b.addEventListener('click', ()=>{ if(codeEl.value.length<6) codeEl.value+=d; });
+      if(d==='0'){ const s1=document.createElement('div'); s1.className='btn'; s1.style.visibility='hidden';
+                   const s2=document.createElement('div'); s2.className='btn'; s2.style.visibility='hidden';
+                   keysEl.append(s1,b,s2); }
+      else keysEl.appendChild(b);
+    });
+    document.getElementById('clear').onclick = ()=> codeEl.value='';
+    document.getElementById('del').onclick   = ()=> codeEl.value=codeEl.value.slice(0,-1);
+    document.getElementById('ok').onclick    = verify;
+
+    codeEl.addEventListener('keydown', (e)=>{
+      if(e.key==='Enter') verify();
+      if(!/^\d$/.test(e.key) && !['Backspace','Delete','ArrowLeft','ArrowRight','Tab','Enter'].includes(e.key)) e.preventDefault();
+    });
+
+    function attempts(){ return parseInt(localStorage.getItem(rateKey())||'0',10); }
+    function bump(){ localStorage.setItem(rateKey(), String(attempts()+1)); }
+
+    async function verify(){
+      errEl.textContent='';
+      if (attempts()>=12) { errEl.textContent='Too many attempts today. Try again tomorrow.'; return; }
+      if (codeEl.value.length!==6) { errEl.textContent='Enter all 6 digits.'; return; }
+      const candidate = await sha256hex(SALT + codeEl.value);
+      if (candidate === HASH_HEX) openStudio();
+      else { bump(); errEl.textContent='Incorrect code.'; codeEl.value=''; }
+    }
+
+    function openStudio(){
+      gate.remove();
+      cmsRoot.hidden=false;
+      const s = document.createElement('script');
+      s.src = "https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js";
+      s.onload = () => console.log('Decap CMS loaded');
+      document.body.appendChild(s);
+    }
+
+    if (sessionStorage.getItem('studio_ok')==='1') openStudio();
+  </script>
+</body>
+</html>
