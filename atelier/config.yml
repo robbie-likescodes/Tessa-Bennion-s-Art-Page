@@ -1,6 +1,6 @@
 backend:
   name: github
-  repo: your-username/your-repo
+  repo: robbie-likescodes/Tessa-Bennion-s-Art-Page
   branch: main
   # For private repos you must configure an OAuth app or proxy.
   # Docs: https://decapcms.org/docs/github-backend/
