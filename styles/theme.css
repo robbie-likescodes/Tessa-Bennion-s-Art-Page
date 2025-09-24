@@ -1,0 +1,165 @@
+/* =======================
+   Academic Art Theme — v1
+   ======================= */
+
+/* ---------- Variables ---------- */
+:root{
+  --bg:#fbfaf8; --ink:#111; --soft-ink:#444; --muted:#6b6b6b; --line:#e6e2db;
+  --accent-1:#3f6b6e; --accent-2:#8d6a5b; --accent-3:#8f88a6;
+  --ombre-a:#2d4a50; --ombre-b:#946e57; --ombre-c:#b0a6c4;
+
+  --font-display:"Cormorant Garamond", ui-serif, Georgia, serif;
+  --font-body:"Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+  --maxw:1180px;
+  --space-1:6px; --space-2:12px; --space-3:20px; --space-4:32px; --space-5:56px;
+  --radius-1:12px;
+
+  --ease-slow:cubic-bezier(.22,.11,.08,1);
+  --ease-ink:cubic-bezier(.2,.7,0,.99);
+}
+
+/* ---------- Base / a11y ---------- */
+*{ box-sizing:border-box }
+html,body{ height:100% }
+html{ background:var(--bg); color:var(--ink); scroll-behavior:smooth }
+body{
+  margin:0; font-family:var(--font-body); line-height:1.55;
+  -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+}
+.visually-hidden{ position:absolute !important; height:1px; width:1px; overflow:hidden; clip:rect(1px,1px,1px,1px); white-space:nowrap }
+
+/* Light paper vignette */
+body::before{
+  content:""; position:fixed; inset:0; pointer-events:none;
+  background:
+    radial-gradient(1200px 800px at 10% 0%, rgba(0,0,0,.03), transparent 60%),
+    radial-gradient(1000px 600px at 90% 100%, rgba(0,0,0,.03), transparent 60%);
+  mix-blend-mode:multiply;
+}
+
+/* ---------- Layout ---------- */
+.container{ width:min(100%,var(--maxw)); margin:0 auto; padding-inline: clamp(16px,3vw,28px) }
+.header{
+  padding: var(--space-4) 0 var(--space-3);
+  display:flex; align-items:flex-end; justify-content:space-between; gap:20px;
+  border-bottom:1px solid var(--line);
+}
+.brand{
+  font-family:var(--font-display); font-weight:600; letter-spacing:.02em;
+  font-size: clamp(32px,5vw,48px); line-height:1; margin:0; transform: translateY(2px);
+}
+.nav{ font-variant-caps: all-small-caps; letter-spacing:.12em; display:flex; gap: clamp(14px,2.4vw,28px) }
+.nav a{ color:var(--ink); text-decoration:none; position:relative; padding-bottom:4px }
+.nav a::after{
+  content:""; position:absolute; left:0; right:0; bottom:0; height:1px;
+  background: linear-gradient(90deg,var(--accent-1),var(--accent-2),var(--accent-3));
+  transform: scaleX(0); transform-origin:left; transition: transform .5s var(--ease-ink);
+}
+.nav a:hover::after{ transform: scaleX(1) }
+
+/* ---------- Type ---------- */
+h1,h2,h3{ font-family:var(--font-display); font-weight:600; line-height:1.15; margin: var(--space-5) 0 var(--space-2) }
+h1{ font-size: clamp(36px,5.2vw,64px) } h2{ font-size: clamp(26px,3.2vw,40px) } h3{ font-size: clamp(20px,2.2vw,26px) }
+p{ color:var(--soft-ink); margin: 0 0 var(--space-3) }
+.caption{ font-size:.92rem; color:var(--muted); letter-spacing:.01em }
+
+/* Hairline rule */
+.hr{ height:1px; background:linear-gradient(90deg,transparent,var(--line),transparent); margin: var(--space-4) 0 }
+
+/* ---------- Hero ---------- */
+.hero{ margin:0 }
+.hero img{ width:100%; border-radius: 10px; border:1px solid var(--line); display:block }
+
+/* ---------- Controls ---------- */
+.control-row{ display:flex; align-items:center; gap:12px; margin: 8px 0 18px }
+.ombre-range{
+  --pct:50%;
+  appearance:none; width:100%; height:14px; border-radius:999px;
+  background: linear-gradient(90deg,var(--ombre-a),var(--ombre-b),var(--ombre-c));
+  background-size: var(--pct) 100%; background-repeat:no-repeat;
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,.06);
+  outline:none;
+}
+.ombre-range::-webkit-slider-runnable-track{ appearance:none; height:14px; background:transparent }
+.ombre-range::-moz-range-track{ height:14px; background:transparent; border:none }
+.ombre-range::-webkit-slider-thumb{
+  appearance:none; width:22px; height:22px; border-radius:50%;
+  background: radial-gradient(circle at 30% 30%, #fff, #ddd);
+  border:1px solid rgba(0,0,0,.12); margin-top:-4px; cursor:ew-resize;
+  box-shadow: 0 4px 14px rgba(0,0,0,.15); transition: transform .2s var(--ease-slow);
+}
+.ombre-range:active::-webkit-slider-thumb{ transform: scale(1.06) }
+.ombre-range::-moz-range-thumb{
+  width:22px; height:22px; border-radius:50%;
+  background: radial-gradient(circle at 30% 30%, #fff, #ddd);
+  border:1px solid rgba(0,0,0,.12); box-shadow: 0 4px 14px rgba(0,0,0,.15);
+}
+.ombre-label{
+  font-family:var(--font-display); font-weight:600; letter-spacing:.02em;
+  display:inline-block; padding:6px 10px; border-radius:999px;
+  background: linear-gradient(90deg, color-mix(in oklab,var(--ombre-a) 20%, white),
+                                     color-mix(in oklab,var(--ombre-b) 20%, white));
+  border:1px solid var(--line); color:var(--ink);
+}
+
+/* ---------- Carousel ---------- */
+.carousel{ --gap: clamp(10px,2vw,18px); margin: var(--space-4) 0 }
+.carousel .frame{
+  overflow:auto; scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch;
+  border-radius: var(--radius-1); border:1px solid var(--line); background:#fff;
+}
+.carousel .rail{ display:grid; grid-auto-flow:column; grid-auto-columns: 80%; gap: var(--gap); padding: var(--gap) }
+@media (min-width:900px){ .carousel .rail{ grid-auto-columns: 48% } }
+
+.carousel figure{
+  scroll-snap-align:start; margin:0; background:#fff; border-radius:10px; overflow:hidden;
+  border:1px solid var(--line); transition: transform .6s var(--ease-slow), box-shadow .6s var(--ease-slow);
+}
+.carousel figure:hover{ transform: translateY(-2px); box-shadow: 0 20px 40px rgba(0,0,0,.06) }
+.carousel img{
+  width:100%; height: clamp(260px, 40vw, 520px); object-fit:cover; display:block;
+  filter: saturate(.92) contrast(1.02);
+  transition: filter .8s var(--ease-slow), transform 1.2s var(--ease-slow);
+}
+.carousel figure:hover img{ filter:none; transform: scale(1.02) }
+.carousel figcaption{
+  padding: 14px 16px 18px; background:#fff;
+  display:flex; justify-content:space-between; gap:12px; align-items:baseline;
+  border-top:1px solid var(--line);
+}
+.work-title{ font-family:var(--font-display); font-weight:600; letter-spacing:.01em }
+.work-meta{ color:var(--muted); font-size:.95rem }
+.carousel .dots{ display:flex; gap:10px; justify-content:center; margin-top:12px }
+.carousel .dot{ width:8px; height:8px; border-radius:50%; background:#cfcac3; opacity:.7 }
+.carousel .dot.is-active{ background: var(--accent-2); opacity:1 }
+
+/* ---------- Artsy transitions ---------- */
+.page-enter{ animation: fadeIn .8s var(--ease-slow) both }
+@keyframes fadeIn{ from{ opacity:0; filter:saturate(.9) } to{ opacity:1; filter:none } }
+.reveal{ clip-path: inset(0 100% 0 0); animation: wipe 950ms var(--ease-ink) both }
+@keyframes wipe{ from{ clip-path: inset(0 100% 0 0) } to{ clip-path: inset(0 0 0 0) } }
+a{ color:inherit; text-underline-offset:2px; text-decoration-thickness:1px }
+.card img{ filter: grayscale(.2) contrast(1.05); transition: filter .6s var(--ease-slow) }
+.card:hover img{ filter:none }
+
+/* ---------- Lightbox ---------- */
+.lightbox{
+  position:fixed; inset:0; display:grid; place-items:center; background: rgba(255,255,255,.86);
+  padding: clamp(10px, 4vw, 36px); z-index: 50;
+}
+.lightbox__img{
+  max-width: 92vw; max-height: 78vh; border-radius: 10px; border:1px solid var(--line);
+  box-shadow: 0 20px 60px rgba(0,0,0,.15);
+}
+.lightbox__close{
+  position: absolute; top: 14px; right: 16px;
+  background: #fff; border:1px solid var(--line); border-radius: 999px; width:40px; height:40px;
+  font-size:22px; line-height:36px; cursor:pointer;
+}
+.lightbox__meta{ margin-top:10px; text-align:center }
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce){
+  *{ animation:none !important; transition:none !important; scroll-behavior:auto !important }
+}
