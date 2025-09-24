@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <meta name="robots" content="noindex, nofollow">
   <title>Studio</title>
-  <link rel="stylesheet" href="/styles/theme.css">
+  <!-- important: we're in /atelier/, so go up one level -->
+  <link rel="stylesheet" href="../styles/theme.css">
   <style>
-    /* Minimal styles for the keypad gate */
     .gate{ position:fixed; inset:0; display:grid; place-content:center; background:#fff; padding:22px }
     .panel{ width:min(420px, 92vw); border:1px solid var(--line); border-radius:12px; padding:22px; box-shadow:0 10px 30px rgba(0,0,0,.06) }
     .code{ letter-spacing:.4em; font-size:28px; text-align:center; padding:10px 12px; border:1px solid #ddd; border-radius:8px; width:100% }
@@ -36,7 +36,6 @@
     </div>
   </div>
 
-  <!-- Decap CMS UI will load here after code passes -->
   <div id="cmsRoot" hidden></div>
 
   <script>
