@@ -9,7 +9,7 @@
   <!-- Fonts + Theme -->
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/styles/theme.css" />
+  <link rel="stylesheet" href="styles/theme.css" />
 </head>
 <body class="page-enter">
   <header class="header container">
@@ -19,7 +19,7 @@
       <a href="#exhibitions">Exhibitions</a>
       <a href="#about">About</a>
       <!-- Hidden admin entry appears if you long-press the logo (see app.js) -->
-      <a id="adminLink" href="/atelier/" style="display:none">Studio</a>
+      <a id="adminLink" href="atelier/" style="display:none">Studio</a>
     </nav>
   </header>
 
@@ -28,7 +28,7 @@
     <section aria-labelledby="heroTitle" style="margin-top:var(--space-5)">
       <h2 id="heroTitle" class="visually-hidden">Featured</h2>
       <figure class="hero">
-        <img class="reveal" src="/uploads/morning-light.jpg" alt="Morning Light — Oil on linen" />
+        <img class="reveal" src="uploads/morning-light.jpg" alt="Morning Light — Oil on linen" />
         <figcaption class="caption">Morning Light · Oil on linen · 24×30 in · 2023</figcaption>
       </figure>
       <div class="hr"></div>
@@ -50,21 +50,21 @@
         <div class="frame">
           <div class="rail">
             <figure class="card reveal">
-              <img src="/uploads/morning-light.jpg" alt="Morning Light — Oil on linen" data-lightbox />
+              <img src="uploads/morning-light.jpg" alt="Morning Light — Oil on linen" data-lightbox />
               <figcaption>
                 <span class="work-title">Morning Light</span>
                 <span class="work-meta">Oil on linen · 24×30 in · 2023</span>
               </figcaption>
             </figure>
             <figure class="card reveal">
-              <img src="/uploads/still-life-vi.jpg" alt="Still Life VI — Oil on panel" data-lightbox />
+              <img src="uploads/still-life-vi.jpg" alt="Still Life VI — Oil on panel" data-lightbox />
               <figcaption>
                 <span class="work-title">Still Life VI</span>
                 <span class="work-meta">Oil on panel · 16×20 in · 2022</span>
               </figcaption>
             </figure>
             <figure class="card reveal">
-              <img src="/uploads/portrait-study.jpg" alt="Portrait Study — Graphite on paper" data-lightbox />
+              <img src="uploads/portrait-study.jpg" alt="Portrait Study — Graphite on paper" data-lightbox />
               <figcaption>
                 <span class="work-title">Portrait Study</span>
                 <span class="work-meta">Graphite on paper · 11×14 in · 2021</span>
@@ -97,7 +97,7 @@
     </section>
   </main>
 
-  <!-- LIGHTBOX OVERLAY (simple, no libs) -->
+  <!-- LIGHTBOX OVERLAY -->
   <div id="lightbox" class="lightbox" hidden>
     <button class="lightbox__close" aria-label="Close">×</button>
     <img class="lightbox__img" alt="" />
@@ -105,6 +105,6 @@
   </div>
 
   <!-- Scripts -->
-  <script type="module" src="/scripts/app.js"></script>
+  <script type="module" src="scripts/app.js"></script>
 </body>
 </html>
