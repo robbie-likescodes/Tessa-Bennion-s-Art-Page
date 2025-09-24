@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="color-scheme" content="light" />
-  <title>Artist Portfolio</title>
+  <title>Alyssa Morgan — Portfolio</title>
 
   <!-- Fonts + Theme -->
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,90 +12,124 @@
   <link rel="stylesheet" href="styles/theme.css" />
 </head>
 <body class="page-enter">
-  <header class="header container">
-    <h1 class="brand" id="siteLogo">Alyssa Morgan</h1>
-    <nav class="nav" aria-label="Primary">
-      <a href="#works">Works</a>
-      <a href="#exhibitions">Exhibitions</a>
-      <a href="#about">About</a>
-      <!-- Hidden admin entry appears if you long-press the logo (see app.js) -->
-      <a id="adminLink" href="atelier/" style="display:none">Studio</a>
-    </nav>
+  <!-- Sticky header -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand-link" href="#top" aria-label="Home">
+        <h1 class="brand" id="siteLogo">Alyssa Morgan</h1>
+      </a>
+      <nav class="nav" aria-label="Primary">
+        <a href="#works">Works</a>
+        <a href="#exhibitions">Exhibitions</a>
+        <a href="#about">About</a>
+        <a id="adminLink" href="atelier/" class="chip chip--subtle" style="display:none">Studio</a>
+      </nav>
+    </div>
   </header>
 
-  <main class="container">
+  <main id="top">
     <!-- HERO -->
-    <section aria-labelledby="heroTitle" style="margin-top:var(--space-5)">
-      <h2 id="heroTitle" class="visually-hidden">Featured</h2>
-      <figure class="hero">
-        <img class="reveal" src="uploads/morning-light.jpg" alt="Morning Light — Oil on linen" />
-        <figcaption class="caption">Morning Light · Oil on linen · 24×30 in · 2023</figcaption>
-      </figure>
-      <div class="hr"></div>
+    <section class="hero-block">
+      <div class="container">
+        <figure class="hero">
+          <img class="reveal" src="uploads/morning-light.jpg" alt="Morning Light — Oil on linen" />
+          <figcaption class="caption hero-cap">Morning Light · Oil on linen · 24×30 in · 2023</figcaption>
+        </figure>
+      </div>
     </section>
 
-    <!-- CONTROLS (example ombré slider) -->
-    <section aria-labelledby="worksTitle">
-      <h2 id="worksTitle">Selected Works</h2>
-      <p class="caption">Oil on linen, graphite, and mixed media · 2019—2025</p>
+    <!-- SELECTED WORKS -->
+    <section class="section" id="works" aria-labelledby="worksTitle">
+      <div class="container">
+        <header class="section-head">
+          <h2 id="worksTitle" class="section-title">Selected Works</h2>
+          <p class="section-sub">Oil on linen, graphite, and mixed media · 2019—2025</p>
+        </header>
 
-      <div class="control-row">
-        <span class="ombre-label">Year</span>
-        <input id="yearRange" class="ombre-range" type="range" min="2019" max="2025" value="2023" />
-        <span id="yearOut" class="caption">2023</span>
-      </div>
+        <!-- Controls -->
+        <div class="controls">
+          <span class="ombre-label">Year</span>
+          <input id="yearRange" class="ombre-range" type="range" min="2019" max="2025" value="2024" />
+          <span id="yearOut" class="caption">2024</span>
+        </div>
 
-      <!-- CAROUSEL -->
-      <div class="carousel" id="works">
-        <div class="frame">
-          <div class="rail">
-            <figure class="card reveal">
-              <img src="uploads/morning-light.jpg" alt="Morning Light — Oil on linen" data-lightbox />
-              <figcaption>
-                <span class="work-title">Morning Light</span>
-                <span class="work-meta">Oil on linen · 24×30 in · 2023</span>
-              </figcaption>
-            </figure>
-            <figure class="card reveal">
-              <img src="uploads/still-life-vi.jpg" alt="Still Life VI — Oil on panel" data-lightbox />
-              <figcaption>
-                <span class="work-title">Still Life VI</span>
-                <span class="work-meta">Oil on panel · 16×20 in · 2022</span>
-              </figcaption>
-            </figure>
-            <figure class="card reveal">
-              <img src="uploads/portrait-study.jpg" alt="Portrait Study — Graphite on paper" data-lightbox />
-              <figcaption>
-                <span class="work-title">Portrait Study</span>
-                <span class="work-meta">Graphite on paper · 11×14 in · 2021</span>
-              </figcaption>
-            </figure>
+        <!-- Carousel -->
+        <div class="carousel">
+          <button class="car-btn car-btn--prev" aria-label="Previous"><span>‹</span></button>
+          <div class="frame" data-carousel-frame>
+            <div class="rail">
+              <figure class="card reveal">
+                <img src="uploads/morning-light.jpg" alt="Morning Light — Oil on linen" data-lightbox />
+                <figcaption>
+                  <span class="work-title">Morning Light</span>
+                  <span class="work-meta">Oil on linen · 24×30 in · 2023</span>
+                </figcaption>
+              </figure>
+              <figure class="card reveal">
+                <img src="uploads/still-life-vi.jpg" alt="Still Life VI — Oil on panel" data-lightbox />
+                <figcaption>
+                  <span class="work-title">Still Life VI</span>
+                  <span class="work-meta">Oil on panel · 16×20 in · 2022</span>
+                </figcaption>
+              </figure>
+              <figure class="card reveal">
+                <img src="uploads/portrait-study.jpg" alt="Portrait Study — Graphite on paper" data-lightbox />
+                <figcaption>
+                  <span class="work-title">Portrait Study</span>
+                  <span class="work-meta">Graphite on paper · 11×14 in · 2021</span>
+                </figcaption>
+              </figure>
+            </div>
           </div>
+          <button class="car-btn car-btn--next" aria-label="Next"><span>›</span></button>
         </div>
         <div class="dots" aria-hidden="true">
           <div class="dot is-active"></div><div class="dot"></div><div class="dot"></div>
         </div>
       </div>
-
-      <div class="hr"></div>
     </section>
 
     <!-- EXHIBITIONS -->
-    <section id="exhibitions" aria-labelledby="exhTitle">
-      <h2 id="exhTitle">Exhibitions</h2>
-      <ul class="exhibitions">
-        <li><strong>Stillness & Light</strong> — Anchorage Museum, Anchorage AK — 2024</li>
-        <li><strong>Quiet Rooms</strong> — SFMOMA Open Space, San Francisco CA — 2023</li>
-      </ul>
-      <div class="hr"></div>
+    <section class="section section--alt" id="exhibitions" aria-labelledby="exhTitle">
+      <div class="container">
+        <header class="section-head">
+          <h2 id="exhTitle" class="section-title">Exhibitions</h2>
+          <p class="section-sub">Selected solo & group shows</p>
+        </header>
+        <ul class="exhibitions">
+          <li><strong>Stillness & Light</strong> — Anchorage Museum, Anchorage AK — 2024</li>
+          <li><strong>Quiet Rooms</strong> — SFMOMA Open Space, San Francisco CA — 2023</li>
+        </ul>
+      </div>
     </section>
 
     <!-- ABOUT -->
-    <section id="about" aria-labelledby="aboutTitle" style="margin-bottom: var(--space-5);">
-      <h2 id="aboutTitle">About</h2>
-      <p>Alyssa Morgan is a fine art painter focused on light studies in oil and graphite. Her work explores calm atmospheres, soft edges, and slow looking.</p>
+    <section class="section" id="about" aria-labelledby="aboutTitle">
+      <div class="container">
+        <header class="section-head">
+          <h2 id="aboutTitle" class="section-title">About</h2>
+        </header>
+        <div class="about-grid">
+          <p>
+            Alyssa Morgan is a painter focused on light studies in oil and graphite. Her practice explores calm atmospheres,
+            soft edges, and slow looking. Works have been exhibited across the U.S. and held in private collections.
+          </p>
+          <p class="caption">
+            Available for commissions and residencies. For inquiries, please email
+            <a href="mailto:studio@example.com">studio@example.com</a>.
+          </p>
+        </div>
+      </div>
     </section>
   </main>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <small class="caption">© <span id="yearNow"></span> Alyssa Morgan · All images © the artist</small>
+      <a class="chip" href="#top">Back to top</a>
+    </div>
+  </footer>
 
   <!-- LIGHTBOX OVERLAY -->
   <div id="lightbox" class="lightbox" hidden>
