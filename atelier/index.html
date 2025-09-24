@@ -18,7 +18,7 @@
     .hint{ color:#888; font-size:12px; margin-top:10px }
   </style>
 
-  <!-- Manual init so we pass config from JS -->
+  <!-- Manual init -->
   <script>window.CMS_MANUAL_INIT = true;</script>
 </head>
 <body>
@@ -29,9 +29,9 @@
       <input id="code" class="code" inputmode="numeric" maxlength="6" autocomplete="one-time-code" aria-label="6-digit code" />
       <div class="keys" id="keys"></div>
       <div class="row">
-        <div class="btn" id="clear">Clear</div>
-        <div class="btn" id="del">Delete</div>
-        <div class="btn" id="ok">OK</div>
+        <button class="btn" id="clear" type="button">Clear</button>
+        <button class="btn" id="del" type="button">Delete</button>
+        <button class="btn" id="ok" type="button">OK</button>
       </div>
       <div class="err" id="err"></div>
       <div class="hint">For your protection, attempts are rate-limited.</div>
@@ -41,7 +41,7 @@
   <div id="cmsRoot" hidden></div>
 
   <script>
-    // ======= GATE CONFIG (your values) =======
+    // ======= GATE CONFIG =======
     const SALT = "Passionforart";
     const HASH_HEX = "b0ec7878d817c32506a98c03178f6c4cb88866d6862fb5a33fbe1c81b0483c46"; // sha256(SALT + "959595")
 
@@ -57,21 +57,24 @@
     const errEl  = document.getElementById('err');
     const gate   = document.getElementById('gate');
     const cmsRoot= document.getElementById('cmsRoot');
+    const okBtn  = document.getElementById('ok');
 
     // keypad
     [...'1234567890'].forEach(d=>{
-      const b=document.createElement('div'); b.className='btn'; b.textContent=d;
+      const b=document.createElement('button'); b.className='btn'; b.type='button'; b.textContent=d;
       b.addEventListener('click', ()=>{ if(codeEl.value.length<6) codeEl.value+=d; });
-      if(d==='0'){ const s1=document.createElement('div'); s1.className='btn'; s1.style.visibility='hidden';
-                   const s2=document.createElement('div'); s2.className='btn'; s2.style.visibility='hidden';
+      if(d==='0'){ const s1=document.createElement('div'); s1.style.visibility='hidden';
+                   const s2=document.createElement('div'); s2.style.visibility='hidden';
                    keysEl.append(s1,b,s2); }
       else keysEl.appendChild(b);
     });
     document.getElementById('clear').onclick = ()=> codeEl.value='';
     document.getElementById('del').onclick   = ()=> codeEl.value=codeEl.value.slice(0,-1);
-    document.getElementById('ok').onclick    = verify;
+    okBtn.onclick = verify;
+
+    // prevent double submit
     codeEl.addEventListener('keydown', (e)=>{
-      if(e.key==='Enter') verify();
+      if(e.key==='Enter'){ e.preventDefault(); okBtn.click(); }
       if(!/^\d$/.test(e.key) && !['Backspace','Delete','ArrowLeft','ArrowRight','Tab','Enter'].includes(e.key)) e.preventDefault();
     });
 
@@ -88,17 +91,36 @@
     }
 
     function openStudio(){
+      if (window.__cmsBooted) return;
+      window.__cmsBooted = true;
+
+      // Clear any stale Netlify/Identity artifacts from localStorage/sessionStorage
+      try {
+        Object.keys(localStorage).forEach(k=>{
+          if (/netlify|identity|git-gateway|cms-user/i.test(k)) localStorage.removeItem(k);
+        });
+        Object.keys(sessionStorage).forEach(k=>{
+          if (/netlify|identity|git-gateway|cms-user/i.test(k)) sessionStorage.removeItem(k);
+        });
+      } catch {}
+
       gate.remove();
       cmsRoot.hidden=false;
 
       const s = document.createElement('script');
+      s.id = 'decapScript';
       s.src = "https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js";
       s.onload = () => {
         window.CMS.init({
-          // 👇 THIS prevents Decap from reading /atelier/config.yml
           load_config_file: false,
           config: {
-            backend: { name: "github", repo: "robbie-likescodes/Tessa-Bennion-s-Art-Page", branch: "main" },
+            // Force pure GitHub backend, implicit auth
+            backend: {
+              name: "github",
+              repo: "robbie-likescodes/Tessa-Bennion-s-Art-Page",
+              branch: "main",
+              auth_type: "implicit"
+            },
             media_folder: "uploads",
             public_folder: "uploads",
             publish_mode: "editorial_workflow",
