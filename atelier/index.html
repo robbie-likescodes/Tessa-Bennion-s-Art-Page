@@ -18,7 +18,7 @@
     .hint{ color:#888; font-size:12px; margin-top:10px }
   </style>
 
-  <!-- Force Decap to accept manual init so we can pass a GitHub config from JS -->
+  <!-- Manual init so we pass config from JS -->
   <script>window.CMS_MANUAL_INIT = true;</script>
 </head>
 <body>
@@ -43,8 +43,7 @@
   <script>
     // ======= GATE CONFIG (your values) =======
     const SALT = "Passionforart";
-    // sha256("Passionforart" + "959595")
-    const HASH_HEX = "b0ec7878d817c32506a98c03178f6c4cb88866d6862fb5a33fbe1c81b0483c46";
+    const HASH_HEX = "b0ec7878d817c32506a98c03178f6c4cb88866d6862fb5a33fbe1c81b0483c46"; // sha256(SALT + "959595")
 
     async function sha256hex(str){
       const enc = new TextEncoder().encode(str);
@@ -59,7 +58,7 @@
     const gate   = document.getElementById('gate');
     const cmsRoot= document.getElementById('cmsRoot');
 
-    // Build keypad (0 centered)
+    // keypad
     [...'1234567890'].forEach(d=>{
       const b=document.createElement('div'); b.className='btn'; b.textContent=d;
       b.addEventListener('click', ()=>{ if(codeEl.value.length<6) codeEl.value+=d; });
@@ -92,11 +91,12 @@
       gate.remove();
       cmsRoot.hidden=false;
 
-      // Load Decap, then init with GitHub backend (no Netlify anywhere)
       const s = document.createElement('script');
       s.src = "https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js";
       s.onload = () => {
         window.CMS.init({
+          // 👇 THIS prevents Decap from reading /atelier/config.yml
+          load_config_file: false,
           config: {
             backend: { name: "github", repo: "robbie-likescodes/Tessa-Bennion-s-Art-Page", branch: "main" },
             media_folder: "uploads",
@@ -124,7 +124,7 @@
             ]
           }
         });
-        console.log('Decap CMS loaded (GitHub backend)');
+        console.log('Decap CMS loaded (GitHub backend, YAML disabled)');
       };
       document.body.appendChild(s);
     }
