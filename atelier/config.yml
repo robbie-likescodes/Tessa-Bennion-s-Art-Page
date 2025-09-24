@@ -2,17 +2,17 @@ backend:
   name: github
   repo: robbie-likescodes/Tessa-Bennion-s-Art-Page
   branch: main
-  # For private repos you must configure an OAuth app or proxy (Decap docs).
+  # No OAuth proxy needed if the repo is PUBLIC (Decap uses GitHub's implicit auth flow)
 
-media_folder: "uploads"     # where images are committed in the repo
-public_folder: "uploads"    # relative URLs so project Pages work
+media_folder: "uploads"
+public_folder: "uploads"
 
 publish_mode: editorial_workflow
 
 collections:
   - name: "works"
     label: "Works"
-    folder: "content/works"      # create this folder (add a .gitkeep)
+    folder: "content/works"
     create: true
     slug: "{{year}}-{{slug}}"
     editor:
