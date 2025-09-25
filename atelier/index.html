@@ -17,6 +17,8 @@
     .err{ color:#b00020; min-height:1.2em; margin-top:8px }
     .hint{ color:#888; font-size:12px; margin-top:10px }
   </style>
+
+  <!-- Manual init; we'll call CMS.init() ourselves -->
   <script>window.CMS_MANUAL_INIT = true;</script>
 </head>
 <body>
@@ -38,7 +40,7 @@
 
   <div id="cmsRoot" hidden></div>
 
-  <!-- OAuth bridge: receive token and open Studio immediately -->
+  <!-- OAuth bridge: on success, persist token then RELOAD (Method B) -->
   <script>
     function cmsToken() {
       try {
@@ -55,7 +57,6 @@
       return null;
     }
 
-    // When the popup sends us the token, persist and launch Studio (no reload loop)
     window.addEventListener('message', (e) => {
       try {
         if (typeof e.data === 'string' && e.data.startsWith('authorization:github:success:')) {
@@ -63,7 +64,8 @@
           const payload = JSON.parse(json); // { token, provider: "github" }
           localStorage.setItem('decap-cms-auth', JSON.stringify(payload));
           localStorage.setItem('netlify-cms-user', JSON.stringify({ token: payload.token, provider: 'github' }));
-          openStudio(); // go straight in
+          // Method B: reload so Decap boots fresh with token present
+          window.location.reload();
         }
       } catch (_) {}
     });
@@ -89,7 +91,7 @@
     const cmsRoot= document.getElementById('cmsRoot');
     const okBtn  = document.getElementById('ok');
 
-    // keypad
+    // keypad UI
     [...'1234567890'].forEach(d=>{
       const b=document.createElement('button'); b.className='btn'; b.type='button'; b.textContent=d;
       b.addEventListener('click', ()=>{ if(codeEl.value.length<6) codeEl.value+=d; });
@@ -122,7 +124,7 @@
       if (window.__cmsBooted) return;
       window.__cmsBooted = true;
 
-      // IMPORTANT: do NOT clear the stored tokens (that caused the loop).
+      // Do NOT clear decap-cms-auth/netlify-cms-user (that caused loops).
       // Only clear old identity artifacts if present.
       try {
         Object.keys(localStorage).forEach(k=>{
@@ -181,7 +183,7 @@
       document.body.appendChild(s);
     }
 
-    // ---- Auto-bypass keypad if token already exists (prevents loop) ----
+    // Auto-bypass keypad if token already exists (prevents loops)
     (function autoBypass(){
       if (cmsToken()) openStudio();
     })();
