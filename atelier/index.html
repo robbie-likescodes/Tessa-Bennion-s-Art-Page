@@ -18,7 +18,7 @@
     .hint{ color:#888; font-size:12px; margin-top:10px }
   </style>
 
-  <!-- Manual init so we fully control Decap config -->
+  <!-- We’ll initialize Decap manually after the keypad -->
   <script>window.CMS_MANUAL_INIT = true;</script>
 </head>
 <body>
@@ -40,8 +40,25 @@
 
   <div id="cmsRoot" hidden></div>
 
+  <!-- OAuth bridge: receive token from popup, persist it for Decap, then reload -->
   <script>
-    // ======= GATE CONFIG (your values) =======
+    window.addEventListener('message', (e) => {
+      try {
+        if (typeof e.data === 'string' && e.data.startsWith('authorization:github:success:')) {
+          const json = e.data.slice('authorization:github:success:'.length);
+          const payload = JSON.parse(json); // { token, provider: "github" }
+          // Store where Decap (and older Netlify CMS) look:
+          localStorage.setItem('decap-cms-auth', JSON.stringify(payload));
+          localStorage.setItem('netlify-cms-user', JSON.stringify({ token: payload.token, provider: 'github' }));
+          // Nudge the editor to proceed
+          location.reload();
+        }
+      } catch (_) {}
+    });
+  </script>
+
+  <script>
+    // ======= GATE CONFIG =======
     const SALT = "Passionforart";
     // sha256("Passionforart" + "959595")
     const HASH_HEX = "b0ec7878d817c32506a98c03178f6c4cb88866d6862fb5a33fbe1c81b0483c46";
@@ -60,7 +77,7 @@
     const cmsRoot= document.getElementById('cmsRoot');
     const okBtn  = document.getElementById('ok');
 
-    // keypad (0 centered on last row)
+    // keypad
     [...'1234567890'].forEach(d=>{
       const b=document.createElement('button'); b.className='btn'; b.type='button'; b.textContent=d;
       b.addEventListener('click', ()=>{ if(codeEl.value.length<6) codeEl.value+=d; });
@@ -93,7 +110,7 @@
       if (window.__cmsBooted) return;
       window.__cmsBooted = true;
 
-      // Clear any stale Netlify Identity artifacts
+      // Clear any stale Netlify/Identity artifacts
       try {
         Object.keys(localStorage).forEach(k=>{ if(/netlify|identity|git-gateway|cms-user/i.test(k)) localStorage.removeItem(k); });
         Object.keys(sessionStorage).forEach(k=>{ if(/netlify|identity|git-gateway|cms-user/i.test(k)) sessionStorage.removeItem(k); });
@@ -107,14 +124,13 @@
       s.src = "https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js";
       s.onload = () => {
         window.CMS.init({
-          load_config_file: false, // ignore any YAML file
+          load_config_file: false, // we pass config inline
           config: {
-            // ======= GITHUB BACKEND via YOUR VERCEL OAUTH PROXY =======
             backend: {
               name: "github",
               repo: "robbie-likescodes/Tessa-Bennion-s-Art-Page",
               branch: "main",
-              base_url: "https://project-gbxs8.vercel.app", // <— your Vercel project URL
+              base_url: "https://project-gbxs8.vercel.app",
               auth_endpoint: "api/auth"
             },
             media_folder: "uploads",
@@ -134,7 +150,8 @@
                   { label: "Medium", name: "medium", widget: "string" },
                   { label: "Dimensions", name: "dimensions", widget: "string" },
                   { label: "Cover Image", name: "cover", widget: "image" },
-                  { label: "Gallery", name: "images", widget: "list", field: { label: "Image", name: "image", widget: "image" } },
+                  { label: "Gallery", name: "images", widget: "list",
+                    field: { label: "Image", name: "image", widget: "image" } },
                   { label: "Description", name: "body", widget: "markdown", required: false },
                   { label: "Tags", name: "tags", widget: "list", required: false }
                 ]
