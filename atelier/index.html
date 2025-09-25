@@ -17,8 +17,6 @@
     .err{ color:#b00020; min-height:1.2em; margin-top:8px }
     .hint{ color:#888; font-size:12px; margin-top:10px }
   </style>
-
-  <!-- We’ll initialize Decap manually after the keypad -->
   <script>window.CMS_MANUAL_INIT = true;</script>
 </head>
 <body>
@@ -40,18 +38,32 @@
 
   <div id="cmsRoot" hidden></div>
 
-  <!-- OAuth bridge: receive token from popup, persist it for Decap, then reload -->
+  <!-- OAuth bridge: receive token and open Studio immediately -->
   <script>
+    function cmsToken() {
+      try {
+        const a = localStorage.getItem('decap-cms-auth');
+        if (a) return JSON.parse(a);
+      } catch {}
+      try {
+        const b = localStorage.getItem('netlify-cms-user');
+        if (b) {
+          const t = JSON.parse(b).token;
+          if (t) return { token: t, provider: 'github' };
+        }
+      } catch {}
+      return null;
+    }
+
+    // When the popup sends us the token, persist and launch Studio (no reload loop)
     window.addEventListener('message', (e) => {
       try {
         if (typeof e.data === 'string' && e.data.startsWith('authorization:github:success:')) {
           const json = e.data.slice('authorization:github:success:'.length);
           const payload = JSON.parse(json); // { token, provider: "github" }
-          // Store where Decap (and older Netlify CMS) look:
           localStorage.setItem('decap-cms-auth', JSON.stringify(payload));
           localStorage.setItem('netlify-cms-user', JSON.stringify({ token: payload.token, provider: 'github' }));
-          // Nudge the editor to proceed
-          location.reload();
+          openStudio(); // go straight in
         }
       } catch (_) {}
     });
@@ -110,10 +122,15 @@
       if (window.__cmsBooted) return;
       window.__cmsBooted = true;
 
-      // Clear any stale Netlify/Identity artifacts
+      // IMPORTANT: do NOT clear the stored tokens (that caused the loop).
+      // Only clear old identity artifacts if present.
       try {
-        Object.keys(localStorage).forEach(k=>{ if(/netlify|identity|git-gateway|cms-user/i.test(k)) localStorage.removeItem(k); });
-        Object.keys(sessionStorage).forEach(k=>{ if(/netlify|identity|git-gateway|cms-user/i.test(k)) sessionStorage.removeItem(k); });
+        Object.keys(localStorage).forEach(k=>{
+          if (/netlify-identity|git-gateway/i.test(k)) localStorage.removeItem(k);
+        });
+        Object.keys(sessionStorage).forEach(k=>{
+          if (/netlify-identity|git-gateway/i.test(k)) sessionStorage.removeItem(k);
+        });
       } catch {}
 
       gate.remove();
@@ -124,7 +141,7 @@
       s.src = "https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js";
       s.onload = () => {
         window.CMS.init({
-          load_config_file: false, // we pass config inline
+          load_config_file: false, // inline config
           config: {
             backend: {
               name: "github",
@@ -163,6 +180,11 @@
       };
       document.body.appendChild(s);
     }
+
+    // ---- Auto-bypass keypad if token already exists (prevents loop) ----
+    (function autoBypass(){
+      if (cmsToken()) openStudio();
+    })();
   </script>
 </body>
 </html>
